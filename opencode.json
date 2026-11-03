@@ -1,0 +1,11 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "agents": {
+    "general": {
+      "model": "opencode-go/claude-haiku-5-5#high"
+    },
+    "explore": {
+      "model": "opencode-go/qwen3.8-flash#low"
+    }
+  }
+}
