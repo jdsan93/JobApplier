@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "findings": {
+    "T31": [
+      "design.md (Checks and manual checklist) requires the user-added exact-cue fill and the missing-or-ambiguous guard to be tested in one module with one fixture set. The Red test currently sits in tests/ambiguity.test.ts, separate from T29's tests/user-added-match.test.ts. Move the three Red cases ('Email' built-in plus user-added question, two user-added matches, no mapping) into tests/user-added-match.test.ts, built on T29's fixture set, and keep their assertions unchanged."
+    ]
+  },
+  "attempts": {
+    "T31": 1
+  }
+}

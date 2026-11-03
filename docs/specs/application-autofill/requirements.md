@@ -13,7 +13,7 @@ As JDash42, I want to enter my reusable application facts on the extension’s o
 #### Acceptance criteria
 
 WHEN the user opens the extension’s options page
-THE SYSTEM SHALL let the user view, enter, and save these built-in profile facts: first name; middle name (optional); last name; date of birth; email; phone country code; phone national number; street numbers; address details for apartment number or similar; city; state/region; postal code; country; neighbourhood / localidad; LinkedIn URL; GitHub URL; portfolio or personal-site URL; US work authorization; whether US sponsorship is needed; gender; race/ethnicity; veteran status; disability status; a decline-to-answer choice for each of those EEO facts; one canned “how did you hear about us” value; and one resume file
+THE SYSTEM SHALL let the user view, enter, and save these built-in profile facts: first name; middle name (optional); last name; date of birth; email; phone country code; phone national number; street numbers; address details for apartment number or similar; city; state/region; postal code; country; neighbourhood / localidad; LinkedIn URL; GitHub URL; portfolio or personal-site URL; US work authorization; whether US sponsorship is needed; gender; race/ethnicity; veteran status; disability status; a decline-to-answer option for each of those EEO facts, typed as the page shows it; one canned “how did you hear about us” value; and one resume file
 
 WHEN the user saves name, phone, address, or date of birth
 THE SYSTEM SHALL store that fact as the pieces listed above so a later fill can compose or split it to match the page
@@ -66,7 +66,7 @@ As JDash42, I want clicking the extension icon to turn auto-mode on and fill the
 WHEN the user clicks the extension icon
 THE SYSTEM SHALL turn auto-mode on
 
-WHEN the user clicks the extension icon and the current tab is a job application (an apply-style page or a page of application-style fields, not a login, checkout, or settings form)
+WHEN the user clicks the extension icon and the current tab is a job application (a page with at least two personal-data fields and at least one job-application-specific field, and no password or payment-card fields)
 THE SYSTEM SHALL fill that tab’s fields that have no value and that map cleanly to stored profile facts
 
 WHEN the user clicks the extension icon and the current tab is not a job application
@@ -84,7 +84,7 @@ As JDash42, I want auto-mode that fills job applications without an extra click 
 WHEN the browser starts a new session
 THE SYSTEM SHALL set auto-mode off
 
-WHEN auto-mode is off
+WHEN auto-mode is off and the user has not clicked the extension icon
 THE SYSTEM SHALL not fill any fields
 
 WHEN the user opens the extension popup
@@ -93,7 +93,7 @@ THE SYSTEM SHALL present a control that turns auto-mode on or off
 WHEN the user turns auto-mode off from the popup
 THE SYSTEM SHALL leave auto-mode off and not fill fields until auto-mode is turned on again
 
-WHEN auto-mode is on and the current tab is a job application (an apply-style page or a page of application-style fields, not a login, checkout, or settings form)
+WHEN auto-mode is on and the current tab is a job application (a page with at least two personal-data fields and at least one job-application-specific field, and no password or payment-card fields)
 THE SYSTEM SHALL fill fields that have no value and that map cleanly to stored profile facts without requiring a further click
 
 WHEN auto-mode is on and the current tab is not a job application
@@ -127,21 +127,21 @@ As JDash42, I want name fields filled from the stored pieces according to how ma
 #### Acceptance criteria
 
 WHEN a fill runs and the page presents exactly one field asking for the applicant’s first, middle, last, or full name
-THE SYSTEM SHALL fill that field with the composed stored name, including middle name only if it is stored, if that field has no value
+THE SYSTEM SHALL fill that field if it has no value: with the composed stored name, including middle name only if it is stored, when the field asks for the full name, or with the matching stored piece when the field asks for first, middle, or last name
 
 WHEN a fill runs and the page presents exactly two fields asking for the applicant’s first, middle, last, or full name
-THE SYSTEM SHALL fill each of those fields that has no value as first/name and last name from the stored pieces
+THE SYSTEM SHALL fill each of those fields that has no value and whose own label, accessible name, or placeholder says first name or last name with that stored piece; a field whose cue says neither stays unchanged
 
 WHEN a fill runs and the page presents exactly two fields asking for the applicant’s first, middle, last, or full name
 THE SYSTEM SHALL not write a composed full name into either field
 
 WHEN a fill runs and the page presents exactly three fields asking for the applicant’s first, middle, last, or full name
-THE SYSTEM SHALL fill each of those fields that has no value as first name, middle name, and last name from the stored pieces
+THE SYSTEM SHALL fill each of those fields that has no value and whose own cue says first name, middle name, or last name with that stored piece; a field whose cue does not say which piece it is stays unchanged
 
 WHEN a fill runs and the page presents four or more fields asking for the applicant’s first, middle, last, or full name
 THE SYSTEM SHALL not use the one-, two-, or three-field name fills
 
-WHEN a fill runs, the page presents four or more fields asking for the applicant’s first, middle, last, or full name, and a field’s label is exactly `first name` or `primer nombre`
+WHEN a fill runs, the page presents four or more fields asking for the applicant’s first, middle, last, or full name, and a field’s label, after trimming and case-folding, is exactly `first name` or `primer nombre`
 THE SYSTEM SHALL fill that field from the stored first name if that field has no value
 
 WHEN a fill runs, the page presents four or more fields asking for the applicant’s first, middle, last, or full name, and a field’s label is exactly `last name` or `apellido`
@@ -150,7 +150,7 @@ THE SYSTEM SHALL fill that field from the stored last name if that field has no 
 WHEN a fill runs, the page presents four or more fields asking for the applicant’s first, middle, last, or full name, and a field’s label is exactly `middle name` or `segundo nombre`
 THE SYSTEM SHALL fill that field from the stored middle name if that field has no value
 
-WHEN a fill runs, the page presents four or more fields asking for the applicant’s first, middle, last, or full name, and a field’s label is not exactly `first name`, `primer nombre`, `last name`, `apellido`, `middle name`, or `segundo nombre`
+WHEN a fill runs, the page presents four or more fields asking for the applicant’s first, middle, last, or full name, and a field’s label, after trimming and case-folding, is not exactly `first name`, `primer nombre`, `last name`, `apellido`, `middle name`, or `segundo nombre`
 THE SYSTEM SHALL not fill that field from the stored first, middle, or last name
 
 ### Compose and split phone, address, and date of birth
@@ -159,8 +159,11 @@ As JDash42, I want those facts stored in pieces and shaped to the page, so that 
 
 #### Acceptance criteria
 
-WHEN a fill runs and the page has a single phone field that has no value and country code and national number are stored
-THE SYSTEM SHALL fill that field by joining those pieces
+WHEN a fill runs and the page has a single phone field that has no value and no separate country-code field
+THE SYSTEM SHALL leave that field unchanged, and SHALL NOT join the stored country code into it
+
+WHEN a fill runs and the page has a country-code field and a phone field that has no value
+THE SYSTEM SHALL fill the phone field with the stored national number
 
 WHEN a fill runs and the page has a country-code field and/or a national-number field
 THE SYSTEM SHALL fill each of those fields that has no value from the matching stored piece
@@ -174,17 +177,20 @@ THE SYSTEM SHALL fill each of those fields that has no value from the matching s
 WHEN a fill runs and the page has a neighbourhood or localidad field that has no value and neighbourhood / localidad is stored
 THE SYSTEM SHALL fill that field from the stored neighbourhood / localidad
 
-WHEN a fill runs and the page has a single full-address field (not a street-only or address-line field) that has no value and that maps cleanly to stored address pieces other than neighbourhood / localidad
-THE SYSTEM SHALL fill that field by composing those stored pieces
+WHEN a fill runs and the page has a single full-address field (not a street-only or address-line field) that has no value and that maps cleanly to stored street numbers, address details, city, state/region, or postal code
+THE SYSTEM SHALL fill that field by composing those stored pieces, writing only the stored parts when some are missing
 
 WHEN a fill runs and the page has a city, state/region, postal code, and/or country field
 THE SYSTEM SHALL fill each of those fields that has no value from the matching stored piece
 
 WHEN a fill runs and the page has a single date-of-birth field that has no value and date of birth is stored
-THE SYSTEM SHALL fill that field from the stored date of birth
+THE SYSTEM SHALL fill that field from the stored date of birth, written in the date format that field asks for (month and day zero-padded, and a two-digit year where the field asks for one)
 
 WHEN a fill runs and the page has a month, day, and/or year field for date of birth and date of birth is stored
-THE SYSTEM SHALL fill each of those fields that has no value from the stored date of birth
+THE SYSTEM SHALL fill each of those fields that has no value from the stored date of birth, with a zero-padded month and day and a two-digit year where that field asks for one
+
+WHEN a fill runs and a date-of-birth field’s expected format cannot be determined from the page
+THE SYSTEM SHALL leave that field unchanged
 
 ### Attach the chosen resume
 
@@ -232,10 +238,16 @@ WHEN a fill runs and a field is an open-ended prompt for original writing (cover
 THE SYSTEM SHALL leave that field unchanged
 
 WHEN a fill runs
-THE SYSTEM SHALL not activate Submit, Next, Continue, or an agree-to-terms control when doing so would advance or complete the application
+THE SYSTEM SHALL not activate Submit, Next, or Continue when doing so would advance or complete the application
 
-WHEN setting a stored value requires using a widget such as a dropdown
+WHEN a fill runs and a field is an agree-to-terms checkbox or control, including one that a user-added fact would match
+THE SYSTEM SHALL not fill it and not activate it
+
+WHEN setting a stored value requires using a native select or radio group
 THE SYSTEM SHALL set the stored value through that widget without advancing or completing the application
+
+WHEN setting a stored value requires using an ARIA dropdown (a combobox or listbox that is not a native select)
+THE SYSTEM SHALL attempt to set the stored value by exact option match without advancing or completing the application, and in version 1 some sites will leave that field unchanged
 
 ### Keep the profile on the user’s machine
 
@@ -305,11 +317,19 @@ THE SYSTEM SHALL leave the upload field unchanged
 WHEN auto-mode is on and the current tab is a login, checkout, or settings form that is not a job application
 THE SYSTEM SHALL not fill any fields
 
-WHEN auto-mode is off and the current tab is a job application
+WHEN auto-mode is off, the user has not clicked the extension icon, and the current tab is a job application
 THE SYSTEM SHALL not fill any fields until auto-mode is turned on
+
+WHEN a settings form has at least two personal-data fields and at least one job-application-specific field, and no password or payment-card fields
+THE SYSTEM SHALL treat it as a job application in version 1 and fill its empty mapped fields
 
 WHEN a fill runs and a field maps to both a built-in fact and a user-added fact
 THE SYSTEM SHALL leave that field unchanged
+
+## Verification
+
+- Criteria about loading into Chrome and Opera GX, icon and popup behaviour, persistence across a browser restart, cross-browser separation, and page-script access are verified by the manual checklist in the design, not by automated tests.
+- The criterion that other extensions cannot read the profile is verified by the manifest check in the design checklist (no `externally_connectable` and no `web_accessible_resources`), together with the browser's extension-private storage.
 
 ## Out of scope
 
@@ -326,6 +346,7 @@ THE SYSTEM SHALL leave that field unchanged
 - Protecting the profile with a passphrase, or defending against disk theft and malware
 - Job-board-specific adapters
 - Built-in compose/split for dates other than date of birth
+- Reading month names (January, enero) in date selects
 - Built-in preferred name, legal name, or name as on passport
 - Built-in filling of free-text “how did you hear about us” answers
 - Matching a user-added fact by similar wording, substring, regex, machine learning, or cues other than the field’s label, accessible name, and placeholder
